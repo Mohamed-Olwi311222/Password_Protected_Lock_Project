@@ -100,6 +100,7 @@ Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
                 if (GPIO_HIGH == col_logic)
                 {
                     *value = btn_values[l_row_counter][l_col_counter];
+                    break;
                 }
            }
         }
