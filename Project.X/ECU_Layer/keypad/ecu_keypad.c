@@ -8,10 +8,10 @@
 
 #if ECU_KEYPAD_ENABLED == ECU_ENABLED
 static const uint8 btn_values[ECU_KEYPAD_ROWS][ECU_KEYPAD_COLS] = {
-                                                               {'7', '8', '9', '/'},
-                                                               {'4', '5', '6', '*'},
-                                                               {'1', '2', '3', '-'},
-                                                               {'#', '0', '=', '+'}
+                                                               {'1', '2', '3'},
+                                                               {'4', '5', '6'},
+                                                               {'7', '8', '9'},
+                                                               {'*', '0', '#'}
 };
 /**
  * @brief initialize the keypad pins

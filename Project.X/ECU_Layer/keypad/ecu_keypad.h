@@ -11,7 +11,7 @@
 #include "../../MCAL_Layer/GPIO/hal_gpio.h"
 #include "../ecu_layer_cgf.h"
 /*----------------------------Macros Declarations-----------------------------*/
-#define ECU_KEYPAD_ROWS  3
+#define ECU_KEYPAD_ROWS  4
 #define ECU_KEYPAD_COLS  3
 /*----------------------------DataTypes---------------------------------------*/
 
