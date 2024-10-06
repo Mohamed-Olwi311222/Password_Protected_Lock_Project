@@ -158,6 +158,7 @@ Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
             ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[l_counter]), GPIO_LOW);
         }
         /* begin scanning for button pressed*/
+        row_counter = 0;
         for (; row_counter < ECU_KEYPAD_ROWS; row_counter++)
         {
             /* Break if the value is read*/
