@@ -28,21 +28,6 @@ keypad_t keypad =   {
     .keypad_rows_pins[3].direction = GPIO_DIRECTION_OUTPUT,
     .keypad_rows_pins[3].logic = GPIO_HIGH,
     .keypad_rows_pins[3].pin = GPIO_PIN3,
-    /*Cols*/
-    .keypad_cols_pins[0].port = PORTC_INDEX,
-    .keypad_cols_pins[0].direction = GPIO_DIRECTION_INPUT,
-    .keypad_cols_pins[0].logic = GPIO_LOW,
-    .keypad_cols_pins[0].pin = GPIO_PIN4,
-    
-    .keypad_cols_pins[1].port = PORTC_INDEX,
-    .keypad_cols_pins[1].direction = GPIO_DIRECTION_INPUT,
-    .keypad_cols_pins[1].logic = GPIO_LOW,
-    .keypad_cols_pins[1].pin = GPIO_PIN5,
-    
-    .keypad_cols_pins[2].port = PORTC_INDEX,
-    .keypad_cols_pins[2].direction = GPIO_DIRECTION_INPUT,
-    .keypad_cols_pins[2].logic = GPIO_LOW,
-    .keypad_cols_pins[2].pin = GPIO_PIN6,
 };
 
 /* LCD for showing the message*/
