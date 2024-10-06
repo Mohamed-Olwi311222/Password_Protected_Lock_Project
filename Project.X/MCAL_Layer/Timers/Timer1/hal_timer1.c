@@ -271,9 +271,7 @@ static inline Std_ReturnType timer1_set_interrupt_handler(INTERRUPT_HANDLER Inte
  */
 static inline void timer1_set_interrupt_priority(const timer1_t *timer1_obj)
 {
-    INTERRUPT_PRIORITY_levels_ENABLE();
     INTERRUPT_Global_interrupt_LOW_ENABLE();
-    INTERRUPT_Global_interrupt_HIGH_ENABLE();
     if (INTERRUPT_HIGH_PRIORITY == timer1_obj->timer1_interrupt_priority)
     {
         TIMER1_HIGH_PRIORITY();
@@ -290,22 +288,6 @@ static inline void timer1_set_interrupt_priority(const timer1_t *timer1_obj)
 void TIMER1_ISR(void)
 {
     TIMER1_INTERRUPT_FLAG_BIT_CLEAR();
-    if (_TIMER1_RW_8bit_OP == T1CONbits.T1RD16)
-    {
-        TIMER1_DISABLE_CONFIG();
-        /* Write to TMR1H*/
-        TMR1H = (uint8)(preloaded_value >> 8);
-        /* Write to TMR1L*/
-        TMR1L = (uint8)preloaded_value;
-        TIMER1_ENABLE_CONFIG();
-    }
-    else
-    {
-        /* Write to TMR1H*/
-        TMR1H = (uint8)(preloaded_value >> 8);
-        /* Write to TMR1L*/
-        TMR1L = (uint8)preloaded_value;
-    }
     if (NULL != timer1_interrupt_handler)
     {
         timer1_interrupt_handler();
