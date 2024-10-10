@@ -76,3 +76,59 @@ Std_ReturnType Data_EEPROM_Read_Byte(uint16 byte_add, uint8 *byte_data)
     }
     return (ret);  
 }
+
+/**
+ * @brief Store an array to a specific address in the EEPROM
+ * @param byte_add the address to save the data into
+ * @param arr the starting address of the array of data to save inside the EEPROM memory address
+ * @param arr_size The size of the array to store
+ * @return E_OK if success otherwise E_NOT_OK
+ */
+Std_ReturnType Data_EEPROM_Write_Array(const uint16 eeprom_add, const uint8 *arr, const uint8 arr_size)
+{
+    Std_ReturnType ret = E_OK;
+    uint8 counter = ZERO_INIT;
+    uint16 temp_add = eeprom_add;
+    
+    if (NULL == arr)
+    {
+        ret = E_NOT_OK;
+    }
+    else
+    {
+        for (; counter < arr_size; counter++)
+        {
+            ret |= Data_EEPROM_Write_Byte(temp_add, arr[counter]);
+            temp_add++;
+        }
+    }
+    return (ret);
+}
+
+/**
+ * @brief Read an array from a specific address in the EEPROM
+ * @param byte_add the address to Read the data from
+ * @param arr the address to save the array read from the EEPROM
+ * @param arr_size The size of the array to store
+ * @return E_OK if success otherwise E_NOT_OK
+ */
+Std_ReturnType Data_EEPROM_Read_Array(const uint16 eeprom_add, const uint8 *arr, const uint8 arr_size)
+{
+    Std_ReturnType ret = E_OK;
+    uint8 counter = ZERO_INIT;
+    uint16 temp_add = eeprom_add;
+    
+    if (NULL == arr)
+    {
+        ret = E_NOT_OK;
+    }
+    else
+    {
+        for (; counter < arr_size; counter++)
+        {
+            ret |= Data_EEPROM_Read_Byte(temp_add, &(arr[counter]));
+            temp_add++;
+        }
+    }
+    return (ret);
+}
