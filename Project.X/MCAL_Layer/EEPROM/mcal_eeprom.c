@@ -12,7 +12,7 @@
  * @param byte_data the data to save inside the EEPROM memory address
  * @return E_OK if success otherwise E_NOT_OK
  */
-Std_ReturnType Data_EEPROM_Write_Byte(uint16 byte_add, uint8 byte_data)
+Std_ReturnType Data_EEPROM_Write_Byte(uint16 byte_add, const uint8 byte_data)
 {
     Std_ReturnType ret = E_OK;
     /*Save the Global Interrupt status*/
@@ -51,7 +51,7 @@ Std_ReturnType Data_EEPROM_Write_Byte(uint16 byte_add, uint8 byte_data)
  * @param byte_data the address to save the data read from the EEPROM
  * @return E_OK if success otherwise E_NOT_OK
  */
-Std_ReturnType Data_EEPROM_Read_Byte(uint16 byte_add, uint8 *byte_data)
+Std_ReturnType Data_EEPROM_Read_Byte(uint16 byte_add, uint8 *const byte_data)
 {
     Std_ReturnType ret = E_OK;
     if (NULL == byte_data)
@@ -84,7 +84,7 @@ Std_ReturnType Data_EEPROM_Read_Byte(uint16 byte_add, uint8 *byte_data)
  * @param arr_size The size of the array to store
  * @return E_OK if success otherwise E_NOT_OK
  */
-Std_ReturnType Data_EEPROM_Write_Array(const uint16 eeprom_add, const uint8 *arr, const uint8 arr_size)
+Std_ReturnType Data_EEPROM_Write_Array(const uint16 eeprom_add, const uint8 *const arr, const uint8 arr_size)
 {
     Std_ReturnType ret = E_OK;
     uint8 counter = ZERO_INIT;
@@ -112,7 +112,7 @@ Std_ReturnType Data_EEPROM_Write_Array(const uint16 eeprom_add, const uint8 *arr
  * @param arr_size The size of the array to store
  * @return E_OK if success otherwise E_NOT_OK
  */
-Std_ReturnType Data_EEPROM_Read_Array(const uint16 eeprom_add, const uint8 *arr, const uint8 arr_size)
+Std_ReturnType Data_EEPROM_Read_Array(const uint16 eeprom_add, uint8 *const arr, const uint8 arr_size)
 {
     Std_ReturnType ret = E_OK;
     uint8 counter = ZERO_INIT;
