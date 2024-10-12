@@ -97,8 +97,7 @@ static void INTx_KEYPAD_ISR(void)
 {
     interrupt_flag = INTERRUPT_OCCUR;                   /* Interrupt happened, save the row_index in the loop */
     gpio_port_read_logic(PORTB_INDEX, &portb_status);   /* Read the logic of PORTB to save the status of it if the col gets low */
-    TIMER1_INTERRUPT_ENABLE();
-    TIMER1_ENABLE_CONFIG();                             /* Start the timer1 module timer */
+    timer1_init(&timer1_obj);                           /* A timer with 200 ms interrupt time until bouncing ends */
 }
 
 /**
@@ -117,9 +116,6 @@ Std_ReturnType keypad_initialize(const keypad_t *keypad_obj)
     }
     else
     {        
-        timer1_init(&timer1_obj);           /* A timer with 75ms interrupt time until bouncing ends */
-        TIMER1_INTERRUPT_DISABLE();
-        TIMER1_DISABLE_CONFIG();            /* Disable the timer1 until an interrupt happens from INTx */
         /* Initialize the row pins */
         for (; l_row_counter < ECU_KEYPAD_ROWS; l_row_counter++)
         {
