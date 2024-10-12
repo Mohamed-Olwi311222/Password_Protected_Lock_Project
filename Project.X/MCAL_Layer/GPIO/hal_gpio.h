@@ -20,8 +20,6 @@
 #define PORT_PIN_MAX_SIZE               8
 #define PORT_MAX_LENGTH                 5
 #define DIRECTION_MAX_LENGTH            2
-#define GPIO_PORT_PIN_CONFIGRATIONS     CONFIG_ENABLE
-#define GPIO_PORT_CONFIGRATIONS         CONFIG_ENABLE
 #define BIT_MASK                     (uint8)1
 #define PORT_MASK                    0xFF
 /*--------------------------Macro Functions-----------------------------------*/
