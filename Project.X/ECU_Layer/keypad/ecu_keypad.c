@@ -188,10 +188,6 @@ Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
             {
                 /* Timeout for entering a value*/
                 *value = TIMEOUT;
-                TIMER1_DISABLE_CONFIG();
-                EXT_INT0_INTERRUPT_DISABLE();
-                EXT_INT1_INTERRUPT_DISABLE();
-                EXT_INT2_INTERRUPT_DISABLE();
                 break;
             }
         }
