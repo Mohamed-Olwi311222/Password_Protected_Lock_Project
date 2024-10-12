@@ -13,18 +13,19 @@ static void TIMER1_KEYPAD_ISR(void);
 static void INTx_KEYPAD_ISR(void);
 /*---------------Static Helper functions declerations End-----------------------*/
 
-/*---------------Static Data types----------------------------------------------*/
+/*---------------Data types-----------------------------------------------------*/
 static const uint8 btn_values[ECU_KEYPAD_ROWS][ECU_KEYPAD_COLS] = {
                                                                {'1', '2', '3'},
                                                                {'4', '5', '6'},
                                                                {'7', '8', '9'},
                                                                {'*', '0', '#'}
 };
-static volatile logic_t cols_btn_pressed[ECU_KEYPAD_COLS] = {GPIO_LOW}; /* An array that contains the status of the 3 cols*/
-static uint8 row_counter = ZERO_INIT;                                   /* A counter for the inner loop in the read function */
-static volatile uint8 row_index = ZERO_INIT;                            /* A variable to store the last row that got logic value high */
-static volatile uint8 debounce_flag = 0;                                /* A flag for bouncing effect, if its 1 the bouncing exist otherwise bouncing stopped*/
-
+volatile logic_t cols_btn_pressed[ECU_KEYPAD_COLS] = {GPIO_LOW}; /* An array that contains the status of the 3 cols*/
+uint8 row_counter = ZERO_INIT;                                   /* A counter for which row got high */
+uint8 col_counter = 0xFF;                                        /* A counter for which col got high */
+static volatile uint8 row_index = ZERO_INIT;                     /* A variable to store the last row that got logic value high */
+volatile uint8 interrupt_flag = INTERRUPT_NOT_OCCUR;             /* A flag for INTx interrupt to stop updating row_index */
+uint8 portb_status = 0x00;                                       /* A variable to store the status of PORTB to fix if the timer1 ended when the col is low */
 /* The external INTx interrupts objects*/
 static interrupt_INTx_t intx_cols[3] = {
     {
@@ -49,12 +50,11 @@ static interrupt_INTx_t intx_cols[3] = {
         .mcu_pin = {.port = PORTB_INDEX, .pin = GPIO_PIN2, .direction = GPIO_DIRECTION_INPUT}
     }
 };
-/*---------------Static Data types End------------------------------------------*/
 
-/* The timer1 object with an interrupt time of 125ms for bouncing effect */
+/* The timer1 object with an interrupt time of 200 ms for bouncing effect */
 static timer1_t timer1_obj = {
-  .timer1_preloaded_value = 3036,
-  .prescaler_value = TIMER1_PRESCALER_DIV_BY_4,
+  .timer1_preloaded_value = 15536,
+  .prescaler_value = TIMER1_PRESCALER_DIV_BY_8,
   .clock_src = _TIMER1_INT_SRC,
   .ext_clk_sync = _TIMER1_ASYNC,
   .rw_mode = _TIMER1_RW_16bit_OP,
@@ -62,26 +62,32 @@ static timer1_t timer1_obj = {
   .timer1_interrupt_handler = TIMER1_KEYPAD_ISR,
   .timer1_interrupt_priority = INTERRUPT_HIGH_PRIORITY
 };
+/*---------------Data types End-------------------------------------------------*/
+
 /**
  * @brief: The timer1 ISR for debouncing
  */
 static void TIMER1_KEYPAD_ISR(void)
 {
     /* Check the actual state of the button */
-    debounce_flag = 0;
-    if (GPIO_HIGH == PORTBbits.RB0)
+    if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN0))
     {
         cols_btn_pressed[INT0_PIN] = GPIO_HIGH;  /* Button confirmed pressed */
+        col_counter = INT0_PIN;                  /* Save which col is high */
     }
-    else if (GPIO_HIGH == PORTBbits.RB1)
+    else if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN1))
     {
         cols_btn_pressed[INT1_PIN] = GPIO_HIGH;
+        col_counter = INT1_PIN;
     }
-    else if (GPIO_HIGH == PORTBbits.RB2)
+    else if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN2))
     {
         cols_btn_pressed[INT2_PIN] = GPIO_HIGH;
+        col_counter = INT2_PIN;
     }
-    timer1_deinit(&timer1_obj);
+    portb_status = 0x00;                /* Reset portb status variable */
+    TIMER1_INTERRUPT_DISABLE();
+    TIMER1_DISABLE_CONFIG();            /* Disable timer1 module */
 }
 /**
  * @brief: The INTx ISR when a button is pressed while scanning working, it will raise an interrupt
@@ -89,12 +95,10 @@ static void TIMER1_KEYPAD_ISR(void)
  */
 static void INTx_KEYPAD_ISR(void)
 {
-    row_index = row_counter;                /* Save the current high row when a col got high*/
-    if (!debounce_flag)
-    {
-        debounce_flag = 1;                  /* bouncing starts, further interrupt raised will do nothing */
-        timer1_init(&timer1_obj);           /* A timer with 125ms interupt time until bouncing ends */
-    }        
+    interrupt_flag = INTERRUPT_OCCUR;                   /* Interrupt happened, save the row_index in the loop */
+    gpio_port_read_logic(PORTB_INDEX, &portb_status);   /* Read the logic of PORTB to save the status of it if the col gets low */
+    TIMER1_INTERRUPT_ENABLE();
+    TIMER1_ENABLE_CONFIG();                             /* Start the timer1 module timer */
 }
 
 /**
@@ -112,7 +116,11 @@ Std_ReturnType keypad_initialize(const keypad_t *keypad_obj)
         ret = E_NOT_OK;
     }
     else
-    {    /* Initialize the row pins */
+    {        
+        timer1_init(&timer1_obj);           /* A timer with 75ms interrupt time until bouncing ends */
+        TIMER1_INTERRUPT_DISABLE();
+        TIMER1_DISABLE_CONFIG();            /* Disable the timer1 until an interrupt happens from INTx */
+        /* Initialize the row pins */
         for (; l_row_counter < ECU_KEYPAD_ROWS; l_row_counter++)
         {
             ret |= gpio_pin_initialize(&(keypad_obj->keypad_rows_pins[l_row_counter]));
@@ -138,8 +146,8 @@ Std_ReturnType keypad_initialize(const keypad_t *keypad_obj)
 Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
 {
     Std_ReturnType ret = E_OK;
-    uint8 l_col_counter = ZERO_INIT, l_counter = ZERO_INIT;
-    
+    uint16 timeout_counter = ZERO_INIT;
+
     if ((NULL == keypad_obj) || (NULL == value))
     {
         ret = E_NOT_OK;
@@ -148,38 +156,46 @@ Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
     {
         /* Make the returned value be NO_INPUT to make sure that no value is there*/
         *value = NO_INPUT;
-        /*write logic low to all rows pins*/
-        for (l_counter = 0; l_counter < ECU_KEYPAD_ROWS; l_counter++)
+        while (NO_INPUT == *value)
         {
-            if (E_NOT_OK == ret)
+            /* begin scanning for button pressed*/
+            row_counter = 0;
+            for (; row_counter < ECU_KEYPAD_ROWS; row_counter++)
             {
-                break;
-            }
-            ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[l_counter]), GPIO_LOW);
-        }
-        /* begin scanning for button pressed*/
-        row_counter = 0;
-        for (; row_counter < ECU_KEYPAD_ROWS; row_counter++)
-        {
-            /* Break if the value is read*/
-            if (NO_INPUT != *value)
-            {
-                break;
-            }
-            /*Write logic high to current row pin*/
-            ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[row_counter]), GPIO_HIGH);       
-            /*check if current row pin make contact with any col pin*/
-            for (l_col_counter = 0; l_col_counter < ECU_KEYPAD_COLS; l_col_counter++)
-            {
+                if (INTERRUPT_NOT_OCCUR == interrupt_flag)
+                {
+                    /* Save the current row if no interrupt happened*/
+                    row_index = row_counter;  
+                    /* If an interrupt happen, the row wont change as the 
+                       current value stored is the last row got high that caused the interrupt*/
+                } 
+                /*Write logic high to current row pin*/
+                ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[row_counter]), GPIO_HIGH); 
                 /*value of the button pressed is read and saved in @value*/
-                if (GPIO_HIGH == cols_btn_pressed[l_col_counter])
-                 {
-                     *value = btn_values[row_index][l_col_counter];
-                     cols_btn_pressed[l_col_counter] = GPIO_LOW;
-                     break;
-                 }
+                if (GPIO_HIGH == cols_btn_pressed[col_counter])
+                {
+                    *value = btn_values[row_index][col_counter];
+                    cols_btn_pressed[col_counter] = GPIO_LOW;
+                    break;
+                }
+                /*Write logic low to current row pin*/   
+                ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[row_counter]), GPIO_LOW);
+            }
+            /* Do a timeout if no value is entered */
+            __delay_ms(100);
+            timeout_counter += 100;  // Increase the timeout counter
+            if (timeout_counter >= KEYPAD_ENTRY_TIMEOUT)
+            {
+                /* Timeout for entering a value*/
+                *value = TIMEOUT;
+                TIMER1_DISABLE_CONFIG();
+                EXT_INT0_INTERRUPT_DISABLE();
+                EXT_INT1_INTERRUPT_DISABLE();
+                EXT_INT2_INTERRUPT_DISABLE();
+                break;
             }
         }
+        interrupt_flag = INTERRUPT_NOT_OCCUR; /* Reset the interrupt_flag to 0 */
     }
     return (ret);    
 }

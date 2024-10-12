@@ -13,12 +13,14 @@
 #include "../../MCAL_Layer/Timers/Timer1/hal_timer1.h"
 #include "../ecu_layer_cgf.h"
 /*----------------------------Macros Declarations-----------------------------*/
-#define ECU_KEYPAD_ROWS  4              /* The number of keypad rows */
-#define ECU_KEYPAD_COLS  3              /* The number of keypad cols */
-#define NO_INPUT         (uint8)0xFF    /* A value to indicate that no value is read*/
-#define INT0_PIN         0              /* An index to the array of the cols logic status*/
-#define INT1_PIN         1              /* An index to the array of the cols logic status*/
-#define INT2_PIN         2              /* An index to the array of the cols logic status*/
+#define ECU_KEYPAD_ROWS             4              /* The number of keypad rows */
+#define ECU_KEYPAD_COLS             3              /* The number of keypad cols */
+#define INT0_PIN                    0              /* An index to the array of the cols logic status */
+#define INT1_PIN                    1              /* An index to the array of the cols logic status */
+#define INT2_PIN                    2              /* An index to the array of the cols logic status */
+#define KEYPAD_ENTRY_TIMEOUT        10000          /* 10 seconds timeout if no value is entered */
+#define TIMEOUT                     (uint8)0xAA
+#define NO_INPUT                    (uint8)0xFF    /* A value to indicate that no value is read */
 /*----------------------------DataTypes---------------------------------------*/
 
 /**
