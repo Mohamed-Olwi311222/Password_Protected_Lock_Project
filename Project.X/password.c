@@ -102,8 +102,9 @@ Std_ReturnType  create_new_password(void)
         ret |= enter_password();
         /* Store the entered password in the EEPROM */
         ret |= Data_EEPROM_Write_Array(EEPROM_STARTING_ADD, password, PASSWORD_LIMIT);
-        __delay_ms(3000);
         ret |= lcd_4bit_send_command(&lcd, _LCD_CLEAR);
+        ret |= lcd_4bit_send_string_pos(&lcd, 1, 1, (uint8 *)"Password Saved :)");
+        __delay_ms(3000);
         /* Reset the password array that store the entered password*/
         reset_password_array();
         return (ret);
