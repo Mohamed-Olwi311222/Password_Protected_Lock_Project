@@ -7,6 +7,7 @@
       <logicalFolder name="ECU_Layer" displayName="ECU_Layer" projectFiles="true">
         <logicalFolder name="Char_LCD" displayName="Char_LCD" projectFiles="true">
           <itemPath>ECU_Layer/Char_LCD/ecu_char_lcd.h</itemPath>
+          <itemPath>ECU_Layer/Char_LCD/ecu_char_lcd_cfg.h</itemPath>
         </logicalFolder>
         <logicalFolder name="DC_Motor" displayName="DC_Motor" projectFiles="true">
           <itemPath>ECU_Layer/DC_Motor/ecu_dc_motor.h</itemPath>
@@ -18,6 +19,9 @@
         <itemPath>ECU_Layer/ecu_layer_init.h</itemPath>
       </logicalFolder>
       <logicalFolder name="MCAL_Layer" displayName="MCAL_Layer" projectFiles="true">
+        <logicalFolder name="EEPROM" displayName="EEPROM" projectFiles="true">
+          <itemPath>MCAL_Layer/EEPROM/mcal_eeprom.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="GPIO" displayName="GPIO" projectFiles="true">
           <itemPath>MCAL_Layer/GPIO/hal_gpio.h</itemPath>
           <itemPath>MCAL_Layer/GPIO/hal_gpio_cfg.h</itemPath>
@@ -37,16 +41,9 @@
           <logicalFolder name="Timer1" displayName="Timer1" projectFiles="true">
             <itemPath>MCAL_Layer/Timers/Timer1/hal_timer1.h</itemPath>
           </logicalFolder>
-          <logicalFolder name="Timer2" displayName="Timer2" projectFiles="true">
-            <itemPath>MCAL_Layer/Timers/Timer2/hal_timer2.h</itemPath>
-          </logicalFolder>
-          <logicalFolder name="Timer3" displayName="Timer3" projectFiles="true">
-            <itemPath>MCAL_Layer/Timers/Timer3/hal_timer3.h</itemPath>
-          </logicalFolder>
         </logicalFolder>
         <itemPath>MCAL_Layer/mcal_std_types.h</itemPath>
         <itemPath>MCAL_Layer/device_config.h</itemPath>
-        <itemPath>MCAL_Layer/device_config.c</itemPath>
       </logicalFolder>
       <itemPath>std_types.h</itemPath>
       <itemPath>application.h</itemPath>
@@ -76,6 +73,9 @@
         <itemPath>ECU_Layer/ecu_layer_init.c</itemPath>
       </logicalFolder>
       <logicalFolder name="MCAL_Layer" displayName="MCAL_Layer" projectFiles="true">
+        <logicalFolder name="EEPROM" displayName="EEPROM" projectFiles="true">
+          <itemPath>MCAL_Layer/EEPROM/mcal_eeprom.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="GPIO" displayName="GPIO" projectFiles="true">
           <itemPath>MCAL_Layer/GPIO/hal_gpio.c</itemPath>
         </logicalFolder>
@@ -90,15 +90,12 @@
           <logicalFolder name="Timer1" displayName="Timer1" projectFiles="true">
             <itemPath>MCAL_Layer/Timers/Timer1/hal_timer1.c</itemPath>
           </logicalFolder>
-          <logicalFolder name="Timer2" displayName="Timer2" projectFiles="true">
-            <itemPath>MCAL_Layer/Timers/Timer2/hal_timer2.c</itemPath>
-          </logicalFolder>
-          <logicalFolder name="Timer3" displayName="Timer3" projectFiles="true">
-            <itemPath>MCAL_Layer/Timers/Timer3/hal_timer3.c</itemPath>
-          </logicalFolder>
         </logicalFolder>
+        <itemPath>MCAL_Layer/device_config.c</itemPath>
       </logicalFolder>
       <itemPath>application.c</itemPath>
+      <itemPath>password.c</itemPath>
+      <itemPath>password.h</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -112,7 +109,7 @@
         <targetDevice>PIC18F4620</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PICkit3PlatformTool</platformTool>
+        <platformTool>noID</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>2.46</languageToolchainVersion>
         <platform>3</platform>
@@ -237,7 +234,7 @@
         <property key="constdata-progmem" value="false"/>
         <property key="gcc-opt-driver-new" value="true"/>
         <property key="gcc-opt-std" value="-std=c99"/>
-        <property key="gcc-output-file-format" value="dwarf-3"/>
+        <property key="gcc-output-file-format" value="coff"/>
         <property key="mapped-progmem" value="false"/>
         <property key="omit-pack-options" value="false"/>
         <property key="omit-pack-options-new" value="1"/>
