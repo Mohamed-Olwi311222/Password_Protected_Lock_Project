@@ -9,6 +9,7 @@
 #define	ECU_CHAR_LCD_H
 /*----------------------------Header Files------------------------------------*/
 #include "../ecu_layer_cgf.h"
+#include "ecu_char_lcd_cfg.h"
 #include "../../MCAL_Layer/GPIO/hal_gpio.h"
 #include <string.h>
 /*----------------------------Macros Declarations-----------------------------*/
@@ -82,15 +83,6 @@ Std_ReturnType lcd_4bit_send_command(const char_lcd_4bit_t *lcd, uint8 command);
  */
 Std_ReturnType lcd_4bit_send_char_data(const char_lcd_4bit_t *lcd, uint8 data);
 
-/**
- * @brief send a char to an lcd with 4bit configuration with required row and col
- * @param lcd the lcd 4bit configuration
- * @param row the row required of the lcd which will start printing to it
- * @param col the column required of the lcd
- * @param data the char to send
- * @return E_OK if status success otherwise E_NOT_OK 
- */
-Std_ReturnType lcd_4bit_send_char_data_pos(const char_lcd_4bit_t *lcd, uint8 row, uint8 col, uint8 data); 
 
 /**
  * @brief send a string to an lcd with 4bit configuration
@@ -109,17 +101,6 @@ Std_ReturnType lcd_4bit_send_string(const char_lcd_4bit_t *lcd, uint8 *str);
  * @return E_OK if status success otherwise E_NOT_OK
  */
 Std_ReturnType lcd_4bit_send_string_pos(const char_lcd_4bit_t *lcd, uint8 row, uint8 col, uint8 *str);
-
-/**
- * @brief send a custom generated character to lcd with 4 bit config
- * @param lcd the lcd 4bit configuration
- * @param row the row required of the lcd which will start printing to it
- * @param row the row required of the lcd which will start printing to it
- * @param _char the custom character to display
- * @param mem_pos the index of the CGRAM in which the custom char will be stored
- * @return E_OK if status success otherwise E_NOT_OK
- */
-Std_ReturnType lcd_4bit_send_custom_char(const char_lcd_4bit_t *lcd, uint8 row, uint8 col, const uint8 _char[], uint8 mem_pos);
 
 /**
  * @brief initialize the 8bit lcd with instruction
@@ -190,13 +171,5 @@ Std_ReturnType lcd_8bit_send_custom_char(const char_lcd_8bit_t *lcd, uint8 row, 
  * @return E_OK if status success otherwise E_NOT_OK 
  */
 Std_ReturnType convert_uint8_to_string(uint8 value, uint8 *str);
-
-/**
- * @brief convert a 2 byte unsigned int to string
- * @param value the value to convert
- * @param str the array of 6(5 + 1 null term) elements so store the number in it
- * @return E_OK if status success otherwise E_NOT_OK 
- */
-Std_ReturnType convert_uint16_to_string(uint16 value, uint8 *str);
 #endif	/* ECU_CHAR_LCD_H */
 
