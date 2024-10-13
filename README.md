@@ -68,7 +68,7 @@ This project implements a **password-protected electronic lock** using a **PIC18
 ## License
 This project is open-source and free to use 
 
-##Project Schematic
+## Project Schematic
 ![image](https://github.com/user-attachments/assets/c24fa4a8-b4b8-4dc1-ace5-7d921f4e201b)
 
 
