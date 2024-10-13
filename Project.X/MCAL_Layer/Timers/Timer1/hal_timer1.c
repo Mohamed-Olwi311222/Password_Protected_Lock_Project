@@ -73,32 +73,6 @@ Std_ReturnType timer1_init(const timer1_t *timer1_obj)
     return (ret);
 }
 /**
- * @brief: Deinitialize the timer1 peripheral object
- * @param timer1_obj the timer1 object to deinit
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType timer1_deinit(const timer1_t *timer1_obj)
-{
-    Std_ReturnType ret = E_OK;
- 
-    if (NULL == timer1_obj)
-    {
-        ret = E_NOT_OK;
-    }
-    else
-    {
-#if TIMER1_INTERRUPT_FEATURE == INTERRUPT_FEATURE_ENABLE
-        /* Clear interrupt flag*/
-        TIMER1_INTERRUPT_FLAG_BIT_CLEAR();
-        /* Disable TIMER1 interrupt */
-        TIMER1_INTERRUPT_DISABLE();
-#endif
-        /* Disable TIMER1 peripheral*/
-        TIMER1_DISABLE_CONFIG();
-    }
-    return (ret);     
-}
-/**
  * @brief: Write the provided value to timer1 counter/timer register
  * @param timer1_obj the timer1 object to write to its register
  * @param value the value to write to the timer1 counter/timer register
@@ -132,38 +106,6 @@ Std_ReturnType timer1_write_value(const timer1_t *timer1_obj, timer1_preload_val
         }
     }
     return (ret);   
-}
-
-/**
- * @brief: Read and store the value from timer1 counter/timer register into the provided address
- * @param timer1_obj the timer1 object to read from its register
- * @param value the address to store the value of the timer1 counter/timer register
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType timer1_read_value(const timer1_t *timer1_obj, timer1_preload_value_t *value)
-{
-    Std_ReturnType ret = E_OK;
- 
-    if ((NULL == timer1_obj) || (NULL == value))
-    {
-        ret = E_NOT_OK;
-    }
-    else
-    {
-        if (_TIMER1_RW_8bit_OP == timer1_obj->rw_mode)
-        {
-            TIMER1_DISABLE_CONFIG();
-            *value = TMR1L;
-            *value += (uint16)(TMR1H << 8);
-            TIMER1_ENABLE_CONFIG();
-        }
-        else
-        {
-            *value = TMR1L;
-            *value += (uint16)(TMR1H << 8);
-        }
-    }
-    return (ret); 
 }
 /**
  * @brief: A helper function to configure the timer1 oscillator

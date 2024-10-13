@@ -165,18 +165,5 @@ Std_ReturnType timer1_init(const timer1_t *timer1_obj);
  * @return E_OK if success otherwise E_NOT_OK 
  */
 Std_ReturnType timer1_write_value(const timer1_t *timer1_obj, timer1_preload_value_t value);
-/**
- * @brief: Read and store the value from timer1 counter/timer register into the provided address
- * @param timer1_obj the timer1 object to read from its register
- * @param value the address to store the value of the timer1 counter/timer register
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType timer1_read_value(const timer1_t *timer1_obj, timer1_preload_value_t *value);
-/**
- * @brief: Deinitialize the timer1 peripheral object
- * @param timer1_obj the timer1 object to deinit
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType timer1_deinit(const timer1_t *timer1_obj);
 #endif	/* HAL_TIMER1_H */
 

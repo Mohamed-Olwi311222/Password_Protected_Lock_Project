@@ -150,14 +150,6 @@ typedef struct
  * @return E_OK if success otherwise E_NOT_OK
  */
 Std_ReturnType Interrupt_INTx_Init(const interrupt_INTx_t *int_obj);
-/**
- * @brief: A software interface to deinitialize the given external INTx interrupt
- * @param int_obj the external INTx interrupt object
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType Interrupt_INTx_Deinit(const interrupt_INTx_t *int_obj);
-
-
 #endif	
 
 #endif	/* MCAL_INTX_EXTERNAL_INTERRUPT_H */

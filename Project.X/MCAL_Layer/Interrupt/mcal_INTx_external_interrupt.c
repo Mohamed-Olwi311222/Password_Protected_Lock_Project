@@ -68,26 +68,6 @@ Std_ReturnType Interrupt_INTx_Init(const interrupt_INTx_t *int_obj)
     }
     return (ret);
 }
-
-/**
- * @brief: A software interface to deinitialize the given external INTx interrupt
- * @param int_obj the external INTx interrupt object
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType Interrupt_INTx_Deinit(const interrupt_INTx_t *int_obj)
-{
-    Std_ReturnType ret = E_OK;
-
-    if (int_obj == NULL)
-    {
-        ret = E_NOT_OK;
-    }
-    else
-    {
-        ret = Interrupt_INTx_Disable(int_obj);
-    }
-    return (ret);
-}
 #endif
 
 /*----------------------Helper functions for INTx interrupt----------------------*/

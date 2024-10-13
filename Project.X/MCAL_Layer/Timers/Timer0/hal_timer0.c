@@ -121,29 +121,6 @@ Std_ReturnType timer0_write_value(const timer0_t *timer0_obj, timer0_preload_val
     }
     return (ret);   
 }
-
-/**
- * @brief: Read and store the value from timer0 counter/timer register into the provided address
- * @param timer0_obj the timer0 object to read from its register
- * @param value the address to store the value of the timer0 counter/timer register
- * @return E_OK if success otherwise E_NOT_OK
- */
-Std_ReturnType timer0_read_value(const timer0_t *timer0_obj, timer0_preload_value_t *value)
-{
-    Std_ReturnType ret = E_OK;
- 
-    if ((NULL == timer0_obj) || (NULL == value))
-    {
-        ret = E_NOT_OK;
-    }
-    else
-    {
-        *value = TMR0L;
-        *value += (uint16)(TMR0H << 8);
-    }
-    return (ret); 
-}
-
 /**
  * @brief A helper function to configure the clock source of the timer0
  * @param timer0_obj the timer0 peripheral object to configure its clock source
