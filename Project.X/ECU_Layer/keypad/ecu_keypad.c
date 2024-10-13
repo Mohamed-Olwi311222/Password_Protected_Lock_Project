@@ -20,7 +20,7 @@ static const uint8 btn_values[ECU_KEYPAD_ROWS][ECU_KEYPAD_COLS] = {
                                                                {'7', '8', '9'},
                                                                {'*', '0', '#'}
 };
-volatile logic_t cols_btn_pressed[ECU_KEYPAD_COLS] = {GPIO_LOW}; /* An array that contains the status of the 3 cols*/
+volatile uint8 cols_btn_pressed = GPIO_LOW;                      /* An array of bits that contains the status of the 3 cols*/
 uint8 row_counter = ZERO_INIT;                                   /* A counter for which row got high */
 uint8 col_counter = 0xFF;                                        /* A counter for which col got high */
 static volatile uint8 row_index = ZERO_INIT;                     /* A variable to store the last row that got logic value high */
@@ -72,17 +72,17 @@ static void TIMER1_KEYPAD_ISR(void)
     /* Check the actual state of the button */
     if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN0))
     {
-        cols_btn_pressed[INT0_PIN] = GPIO_HIGH;  /* Button confirmed pressed */
-        col_counter = INT0_PIN;                  /* Save which col is high */
+        SET_BIT(cols_btn_pressed, INT0_PIN);  /* Button confirmed pressed */
+        col_counter = INT0_PIN;               /* Save which col is high */
     }
     else if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN1))
     {
-        cols_btn_pressed[INT1_PIN] = GPIO_HIGH;
+        SET_BIT(cols_btn_pressed, INT1_PIN);
         col_counter = INT1_PIN;
     }
     else if (GPIO_HIGH == READ_BIT(portb_status, GPIO_PIN2))
     {
-        cols_btn_pressed[INT2_PIN] = GPIO_HIGH;
+        SET_BIT(cols_btn_pressed, INT2_PIN);
         col_counter = INT2_PIN;
     }
     portb_status = 0x00;                /* Reset portb status variable */
@@ -168,10 +168,10 @@ Std_ReturnType keypad_get_value(const keypad_t *keypad_obj, uint8 *value)
                 /*Write logic high to current row pin*/
                 ret = gpio_pin_write_logic(&(keypad_obj->keypad_rows_pins[row_counter]), GPIO_HIGH); 
                 /*value of the button pressed is read and saved in @value*/
-                if (GPIO_HIGH == cols_btn_pressed[col_counter])
+                if (GPIO_HIGH == READ_BIT(cols_btn_pressed, col_counter))
                 {
                     *value = btn_values[row_index][col_counter];
-                    cols_btn_pressed[col_counter] = GPIO_LOW;
+                    cols_btn_pressed = GPIO_LOW;
                     break;
                 }
                 /*Write logic low to current row pin*/   
