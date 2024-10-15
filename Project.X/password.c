@@ -149,6 +149,11 @@ Std_ReturnType check_pass(uint8 *pass_status)
     {
        minutes = (lock_time[attempts - 3]);
     }
+    /* If the attempts is more than the MAX_LOCKS then it will always lock down for an hour*/
+    else if ((attempts >= 3))
+    {
+        minutes = (lock_time[5]);
+    }
     return (ret);
 }
 
